@@ -1,0 +1,10 @@
+# For fetching financial data
+yfinance
+# For data manipulation and analysis
+pandas
+pyarrow
+# For visualization
+streamlit
+plotly
+# For UI components
+streamlit-shadcn-ui
