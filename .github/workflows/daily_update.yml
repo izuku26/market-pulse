@@ -4,7 +4,10 @@ on:
   schedule:
     - cron: '0 0 * * *' # Se lance tous les jours à minuit
   workflow_dispatch: # Permet de le lancer manuellement
-
+# --- AJOUTEZ CECI ---
+permissions:
+  contents: write
+# --------------------
 jobs:
   update_data:
     runs-on: ubuntu-latest
