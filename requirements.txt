@@ -1,10 +1,6 @@
-# For fetching financial data
-yfinance
-# For data manipulation and analysis
-pandas
+yfinance>=0.2.3
+pandas>=2.0.0
 pyarrow
-# For visualization
-streamlit
-plotly
-# For UI components
-streamlit-shadcn-ui
+streamlit>=1.30.0
+plotly>=5.18.0
+streamlit-shadcn-ui==0.1.11
