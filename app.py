@@ -10,16 +10,22 @@ import numpy as np
 st.set_page_config(
     page_title=" Market Pulse",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",   # collapsed par défaut sur mobile
     page_icon="📊"
 )
 
 # ============================================================
-# CSS
+# CSS  — style original + couche responsive mobile
 # ============================================================
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap');
+
+/* ── Breakpoint helper (à lire dans les règles ci-dessous)
+   Mobile  : max-width 768px
+   Tablette: 769px – 1024px
+   Desktop : 1025px+
+──────────────────────────────────────────────────────── */
 
 :root {
     --bg:        #F4F6F9;
@@ -42,6 +48,7 @@ st.markdown("""
     --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.05);
 }
 
+/* ── Base ── */
 html, body, [class*="css"], .stApp {
     font-family: 'DM Sans', sans-serif !important;
     background-color: var(--bg) !important;
@@ -51,9 +58,12 @@ html, body, [class*="css"], .stApp {
     background-color: var(--bg) !important;
     padding-top: 1.2rem !important;
     max-width: 1280px;
+    /* Padding latéral adaptatif */
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
 }
 
-/* Sidebar */
+/* ── Sidebar ── */
 [data-testid="stSidebar"] { background: var(--navy) !important; }
 [data-testid="stSidebar"] > div { padding: 1.4rem 1rem; }
 [data-testid="stSidebar"] * { color: rgba(255,255,255,0.88) !important; }
@@ -75,7 +85,7 @@ html, body, [class*="css"], .stApp {
 }
 [data-testid="stSidebar"] hr { border-color: rgba(255,255,255,0.1) !important; }
 
-/* Banner */
+/* ── Banner ── */
 .gmp-banner {
     background: linear-gradient(115deg, #1A2B45 0%, #243D62 55%, #1E3A5F 100%);
     border-radius: var(--radius);
@@ -106,7 +116,7 @@ html, body, [class*="css"], .stApp {
     font-family: 'DM Mono', monospace;
 }
 
-/* KPI */
+/* ── KPI ── */
 .kpi-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -139,7 +149,7 @@ html, body, [class*="css"], .stApp {
 .kpi-sub { font-size: 0.76rem; color: var(--muted); margin-top: 0.35rem;
            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* Section */
+/* ── Section ── */
 .sec-tag {
     display: inline-block;
     font-size: 0.63rem; font-weight: 700; letter-spacing: 0.16em;
@@ -157,7 +167,7 @@ html, body, [class*="css"], .stApp {
 }
 .sec-divider { border: none; border-top: 1px solid var(--border); margin: 0.35rem 0 0.9rem; }
 
-/* Glossaire */
+/* ── Glossaire ── */
 .glos-row { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 0.9rem; }
 .glos-item {
     flex: 1; min-width: 150px;
@@ -168,7 +178,7 @@ html, body, [class*="css"], .stApp {
 .glos-term { font-weight: 600; color: var(--navy); margin-bottom: 0.18rem; }
 .glos-def  { color: var(--muted); line-height: 1.4; }
 
-/* Chart card */
+/* ── Chart card ── */
 .chart-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -178,17 +188,135 @@ html, body, [class*="css"], .stApp {
     margin-bottom: 1rem;
 }
 
-/* Misc */
+/* ── Misc ── */
 [data-testid="stCheckbox"] label { font-size: 0.84rem !important; font-weight: 500 !important; }
 .stMarkdown p { color: var(--text) !important; }
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE — MOBILE  (≤ 768 px)
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+    /* Padding réduit sur petit écran */
+    .main .block-container {
+        padding-left: 0.6rem !important;
+        padding-right: 0.6rem !important;
+        padding-top: 0.8rem !important;
+    }
+
+    /* Banner plus compact */
+    .gmp-banner {
+        padding: 1.2rem 1.2rem 1rem;
+        margin-bottom: 1rem;
+    }
+    .gmp-banner h1 { font-size: 1.35rem; margin-bottom: 0.5rem; }
+    .gmp-banner .eyebrow { font-size: 0.6rem; }
+    .gmp-banner .badge {
+        font-size: 0.7rem;
+        padding: 0.22rem 0.65rem;
+        /* Wrap si trop long */
+        white-space: normal;
+        line-height: 1.4;
+    }
+
+    /* KPI : 2 colonnes sur mobile au lieu de 4 */
+    .kpi-grid-mobile {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+        margin-bottom: 1rem;
+    }
+    .kpi-value { font-size: 1.25rem; }
+    .kpi-label { font-size: 0.65rem; }
+    .kpi-sub   { font-size: 0.7rem; }
+
+    /* Sections */
+    .sec-title { font-size: 1.05rem; }
+    .sec-desc  { font-size: 0.8rem; }
+
+    /* Glossaire : une seule colonne */
+    .glos-row { flex-direction: column; }
+    .glos-item { min-width: unset; }
+
+    /* Charts : hauteur réduite */
+    .chart-card { padding: 0.6rem 0.4rem 0.2rem; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE — TABLETTE  (769 – 1024 px)
+   ══════════════════════════════════════════════════════════ */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .main .block-container {
+        padding-left: 0.8rem !important;
+        padding-right: 0.8rem !important;
+    }
+    .gmp-banner { padding: 1.5rem 1.8rem; }
+    .gmp-banner h1 { font-size: 1.55rem; }
+    .kpi-value { font-size: 1.4rem; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   STREAMLIT COLUMNS → override pour mobile
+   Sur mobile Streamlit empile déjà les colonnes verticalement,
+   on s'assure juste que l'espacement et la largeur sont corrects.
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+    /* Streamlit column wrapper */
+    [data-testid="stHorizontalBlock"] {
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+    }
+
+    /* Chaque colonne prend 100% sur mobile sauf les KPI
+       (gérés via kpi-grid-mobile en HTML natif ci-dessus) */
+    [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+        min-width: 100% !important;
+        width: 100% !important;
+        flex: 1 1 100% !important;
+    }
+
+    /* Exception : colonnes KPI → 50% chacune */
+    .kpi-cols [data-testid="stColumn"] {
+        min-width: 48% !important;
+        width: 48% !important;
+        flex: 1 1 48% !important;
+    }
+
+    /* Slider : épaisseur du thumb plus grande pour le touch */
+    [data-testid="stSlider"] .st-bp { height: 6px !important; }
+    [data-testid="stSlider"] [role="slider"] {
+        width: 22px !important;
+        height: 22px !important;
+    }
+
+    /* Multiselect : taille confortable au touch */
+    [data-baseweb="input"] { min-height: 40px !important; }
+    [data-testid="stMultiSelect"] [data-baseweb="select"] {
+        min-height: 44px !important;
+    }
+
+    /* Toolbar Plotly : masquée sur mobile (trop encombrante) */
+    .modebar { display: none !important; }
+
+    /* DataFrame : scroll horizontal */
+    [data-testid="stDataFrame"] { overflow-x: auto !important; }
+    [data-testid="stDataFrame"] > div { min-width: 400px; }
+
+    /* Sidebar toggle button : plus grand au touch */
+    [data-testid="stSidebarCollapsedControl"] button {
+        width: 44px !important;
+        height: 44px !important;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
 # ============================================================
-# PALETTE GRAPHIQUES — 12 couleurs bien distinctes sur fond blanc
+# PALETTE GRAPHIQUES
 # ============================================================
 PALETTE = [
     "#2563EB",  # bleu vif
@@ -213,7 +341,6 @@ ASSET_NAMES = {
     "^FCHI":    "CAC 40 🇫🇷",
     "^N225":    "Nikkei 225 🇯🇵",
     "GC=F":     "Or 🟡",
-    
     "W=F":      "Blé 🌾",
     "BTC-USD":  "Bitcoin ₿",
     "ETH-USD":  "Ethereum ⟠",
@@ -226,7 +353,6 @@ ASSET_NAMES = {
 @st.cache_data
 def load_data():
     df = pd.read_parquet("data/market_data.parquet")
-    # Dédoublonnage sur l'index (lignes dupliquées dans le dataset)
     df = df[~df.index.duplicated(keep='last')]
     df = df.sort_index()
     return df.rename(columns=ASSET_NAMES)
@@ -237,14 +363,21 @@ except Exception as e:
     st.error(f" Impossible de charger les données — relancez l'ETL. Détail : {e}")
     st.stop()
 
-# ── Helpers mise en forme ──────────────────────────────────
+# ── Helpers ──
 def hex_to_rgba(h, alpha=0.15):
     h = h.lstrip('#')
     r, g, b = int(h[0:2],16), int(h[2:4],16), int(h[4:6],16)
     return f"rgba({r},{g},{b},{alpha})"
 
+def is_mobile():
+    """Détecte si on est sur un petit écran via les query params Streamlit."""
+    try:
+        w = st.query_params.get("sw", None)
+        return int(w) < 769 if w else False
+    except Exception:
+        return False
+
 def base_layout(**kw):
-    """Layout Plotly de base — fond blanc, axes lisibles, pas de legend ici."""
     d = dict(
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#F8FAFC",
@@ -282,6 +415,17 @@ LEGEND_H = dict(
     itemsizing="constant",
 )
 
+# Légende plus compacte pour mobile / tablette
+LEGEND_H_MOBILE = dict(
+    orientation="h", yanchor="bottom", y=1.02,
+    xanchor="left", x=0,
+    bgcolor="rgba(255,255,255,0.95)",
+    bordercolor="#DDE2EC", borderwidth=1,
+    font=dict(size=9, color="#334155"),
+    itemsizing="constant",
+    tracegroupgap=4,
+)
+
 # ============================================================
 # SIDEBAR
 # ============================================================
@@ -317,9 +461,6 @@ with st.sidebar:
         value=(min_d, max_d), format="MMM YYYY"
     )
 
-    
-   
-
     n_actifs = len(selected)
     n_jours  = (date_range[1] - date_range[0]).days
     st.markdown("---")
@@ -348,8 +489,6 @@ if not selected:
 # DONNÉES FILTRÉES & CALCULS
 # ============================================================
 df_f = df.loc[date_range[0]:date_range[1], selected].copy()
-
-# Remplir les week-ends / jours fériés par la dernière valeur connue
 df_f = df_f.ffill()
 
 ret = df_f.pct_change().replace([np.inf, -np.inf], np.nan)
@@ -364,21 +503,17 @@ max_dd      = drawdown.min() * 100
 
 yearly_perf = df_f.resample('YE').last().pct_change() * 100
 
-# Base 100 propre : on prend la PREMIERE valeur non-nulle de chaque colonne
-# et on s'assure qu'il n'y a pas de 0 ou NaN comme base
 df_norm = pd.DataFrame(index=df_f.index)
 for col in selected:
     series = df_f[col].dropna()
-    series = series[series > 0]          # évite division par zéro
+    series = series[series > 0]
     if series.empty:
         continue
     base = series.iloc[0]
     normed = (df_f[col] / base) * 100
-    # Clip raisonnable : pas plus de ×1000 (100 000 en base 100)
     normed = normed.clip(upper=100_000)
     df_norm[col] = normed
 
-# KPI
 best_ret_val = ann_return.max()
 best_asset   = ann_return.idxmax()
 worst_dd_val = max_dd.min()
@@ -386,14 +521,53 @@ avg_vol      = ann_vol.mean()
 avg_sharpe   = sharpe.mean()
 
 # ============================================================
+# DÉTECTION LARGEUR — injecte un tag HTML + JS pour passer
+# la largeur du viewport comme query param, sans rechargement forcé.
+# Streamlit re-rend de toute façon lors d'une interaction ;
+# ici on l'utilise juste pour adapter les hauteurs de graphiques.
+# ============================================================
+st.markdown("""
+<script>
+(function(){
+    var w = window.innerWidth;
+    var url = new URL(window.location.href);
+    if(url.searchParams.get('sw') !== String(w)){
+        url.searchParams.set('sw', w);
+        window.history.replaceState({}, '', url.toString());
+    }
+})();
+</script>
+""", unsafe_allow_html=True)
+
+# Hauteurs adaptatives selon la largeur de viewport
+try:
+    sw = int(st.query_params.get("sw", 1280))
+except Exception:
+    sw = 1280
+
+MOBILE   = sw < 769
+TABLET   = 769 <= sw <= 1024
+
+def chart_h(desktop=430, tablet=370, mobile=300):
+    if MOBILE:  return mobile
+    if TABLET:  return tablet
+    return desktop
+
+def dd_h(n):
+    base = max(280, n * 42 + 70)
+    if MOBILE: return max(220, n * 36 + 50)
+    return base
+
+# ============================================================
 # BANNIÈRE
 # ============================================================
+period_str = f"{date_range[0].strftime('%d %b %Y')} → {date_range[1].strftime('%d %b %Y')}"
 st.markdown(f"""
 <div class="gmp-banner">
     <div class="eyebrow">Tableau de bord · Marchés mondiaux</div>
     <h1> Market Pulse</h1>
     <span class="badge">
-        {date_range[0].strftime('%d %b %Y')} → {date_range[1].strftime('%d %b %Y')}
+        {period_str}
         &nbsp;·&nbsp; {n_actifs} actif{'s' if n_actifs != 1 else ''}
     </span>
 </div>
@@ -401,28 +575,40 @@ st.markdown(f"""
 
 # ============================================================
 # KPI CARDS
+# Sur mobile : grille 2×2 en HTML natif (échappe aux colonnes Streamlit).
+# Sur desktop/tablette : 4 colonnes Streamlit classiques.
 # ============================================================
-c1, c2, c3, c4 = st.columns(4)
-
-def kpi(col, label, value, sub, card_cls="", val_cls=""):
-    col.markdown(f"""
-    <div class="kpi-card {card_cls}">
-        <div class="kpi-label">{label}</div>
-        <div class="kpi-value {val_cls}">{value}</div>
-        <div class="kpi-sub" title="{sub}">{sub}</div>
-    </div>
-    """, unsafe_allow_html=True)
-
 sign = "+" if best_ret_val >= 0 else ""
-kpi(c1, "Meilleure performance",
-    f"{sign}{best_ret_val:.1f}%/an", f"↑ {best_asset}",
-    "kgreen", "vg" if best_ret_val >= 0 else "vr")
-kpi(c2, "Pire chute enregistrée",
-    f"{worst_dd_val:.1f}%", "Perte max sur la période", "kred", "vr")
-kpi(c3, "Ratio Sharpe moyen",
-    f"{avg_sharpe:.2f}", "Gain pour chaque % de risque pris", "kgold", "vo")
-kpi(c4, "Volatilité moyenne",
-    f"{avg_vol:.1f}%/an", "Amplitude annuelle des variations", "kteal", "vt")
+
+KPI_DATA = [
+    ("Meilleure performance", f"{sign}{best_ret_val:.1f}%/an", f"↑ {best_asset}", "kgreen", "vg" if best_ret_val >= 0 else "vr"),
+    ("Pire chute enregistrée", f"{worst_dd_val:.1f}%", "Perte max sur la période", "kred", "vr"),
+    ("Ratio Sharpe moyen", f"{avg_sharpe:.2f}", "Gain pour chaque % de risque pris", "kgold", "vo"),
+    ("Volatilité moyenne", f"{avg_vol:.1f}%/an", "Amplitude annuelle des variations", "kteal", "vt"),
+]
+
+if MOBILE:
+    # Grille HTML 2×2 — indépendante de Streamlit columns
+    cards_html = '<div class="kpi-grid-mobile">'
+    for label, value, sub, card_cls, val_cls in KPI_DATA:
+        cards_html += f"""
+        <div class="kpi-card {card_cls}">
+            <div class="kpi-label">{label}</div>
+            <div class="kpi-value {val_cls}">{value}</div>
+            <div class="kpi-sub" title="{sub}">{sub}</div>
+        </div>"""
+    cards_html += '</div>'
+    st.markdown(cards_html, unsafe_allow_html=True)
+else:
+    c1, c2, c3, c4 = st.columns(4)
+    for col, (label, value, sub, card_cls, val_cls) in zip([c1, c2, c3, c4], KPI_DATA):
+        col.markdown(f"""
+        <div class="kpi-card {card_cls}">
+            <div class="kpi-label">{label}</div>
+            <div class="kpi-value {val_cls}">{value}</div>
+            <div class="kpi-sub" title="{sub}">{sub}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
 st.markdown("<div style='margin-bottom:.5rem'></div>", unsafe_allow_html=True)
 
@@ -464,30 +650,30 @@ fig1.add_hline(
     annotation_position="bottom right",
 )
 
-# Échelle Y : si log → Plotly gère bien ; si linéaire → borner à max observé
 y_max = df_norm.max().max() if not df_norm.empty else 500
-y_type =  "linear"
 
 fig1.update_layout(
     **base_layout(
-        height=430,
+        height=chart_h(430, 370, 300),
         yaxis=dict(
-            type=y_type,
-            title="Valeur de votre investissement (€)",
-            title_font=dict(size=13, color="#475569"),
+            type="linear",
+            title="Valeur de votre investissement (€)" if not MOBILE else "Valeur (€)",
+            title_font=dict(size=13 if not MOBILE else 11, color="#475569"),
             gridcolor="#E2E8F0", linecolor="#CBD5E1",
-            tickfont=dict(size=12, color="#475569"),
+            tickfont=dict(size=12 if not MOBILE else 10, color="#475569"),
             zeroline=False,
-            # En linéaire : pas d'échelle absurde
             range=[0, min(y_max * 1.05, y_max + 200)],
         ),
         xaxis=dict(
             title=None,
             gridcolor="#E2E8F0", linecolor="#CBD5E1",
-            tickfont=dict(size=12, color="#475569"),
+            tickfont=dict(size=12 if not MOBILE else 10, color="#475569"),
             zeroline=False,
+            # Moins de ticks sur mobile
+            nticks=6 if MOBILE else 10,
         ),
-        legend=LEGEND_H,
+        legend=LEGEND_H_MOBILE if MOBILE else LEGEND_H,
+        margin=dict(l=10, r=10, t=55 if MOBILE else 45, b=35),
     )
 )
 
@@ -536,7 +722,9 @@ risk_df = pd.DataFrame({
 fig2 = go.Figure()
 for i, (idx, row) in enumerate(risk_df.iterrows()):
     clr  = PALETTE[i % len(PALETTE)]
-    size = max(16, min(55, abs(row["Rendement (%)"]) * 0.9 + 10))
+    # Bulles plus petites sur mobile
+    size = max(14 if MOBILE else 16, min(45 if MOBILE else 55,
+               abs(row["Rendement (%)"]) * 0.9 + 10))
     fig2.add_trace(go.Scatter(
         x=[row["Volatilité (%)"]],
         y=[row["Rendement (%)"]],
@@ -548,7 +736,7 @@ for i, (idx, row) in enumerate(risk_df.iterrows()):
         ),
         text=[idx],
         textposition="top center",
-        textfont=dict(size=11, family="DM Sans", color="#1A2B45"),
+        textfont=dict(size=9 if MOBILE else 11, family="DM Sans", color="#1A2B45"),
         hovertemplate=(
             f"<b style='color:{clr}'>{idx}</b><br>"
             f"Gain moyen : <b>%{{y:.1f}}%/an</b><br>"
@@ -564,33 +752,33 @@ fig2.add_hline(
     annotation_position="bottom right",
 )
 
-# Axes bornés sur les vraies valeurs
 x_max = risk_df["Volatilité (%)"].max() * 1.18 if not risk_df.empty else 120
 y_min = risk_df["Rendement (%)"].min() * 1.2  if risk_df["Rendement (%)"].min() < 0 else -5
 y_max2= risk_df["Rendement (%)"].max() * 1.2  if not risk_df.empty else 50
 
 fig2.update_layout(
     **base_layout(
-        height=420,
+        height=chart_h(420, 360, 310),
         showlegend=False,
         xaxis=dict(
-            title="Risque — Volatilité annuelle (%)",
-            title_font=dict(size=13, color="#475569"),
+            title="Risque — Volatilité (%)" if not MOBILE else "Volatilité (%)",
+            title_font=dict(size=13 if not MOBILE else 11, color="#475569"),
             gridcolor="#E2E8F0", linecolor="#CBD5E1",
-            tickfont=dict(size=12, color="#475569"),
+            tickfont=dict(size=12 if not MOBILE else 10, color="#475569"),
             zeroline=False,
             range=[0, x_max],
             ticksuffix="%",
         ),
         yaxis=dict(
-            title="Gain annuel moyen (%)",
-            title_font=dict(size=13, color="#475569"),
+            title="Gain annuel moyen (%)" if not MOBILE else "Gain/an (%)",
+            title_font=dict(size=13 if not MOBILE else 11, color="#475569"),
             gridcolor="#E2E8F0", linecolor="#CBD5E1",
-            tickfont=dict(size=12, color="#475569"),
+            tickfont=dict(size=12 if not MOBILE else 10, color="#475569"),
             zeroline=False,
             range=[y_min, y_max2],
             ticksuffix="%",
         ),
+        margin=dict(l=10, r=10, t=25, b=40 if MOBILE else 40),
     )
 )
 
@@ -600,6 +788,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================================================
 # 03 — DRAWDOWN
+# Sur mobile : empilement vertical au lieu de 2 colonnes côte à côte
 # ============================================================
 st.markdown("""
 <div style="margin:1.8rem 0 .35rem">
@@ -614,85 +803,94 @@ st.markdown("""
 <hr class="sec-divider">
 """, unsafe_allow_html=True)
 
-dd_c1, dd_c2 = st.columns([2, 3])
+sorted_dd  = max_dd.sort_values()
+bar_colors = [PALETTE[list(selected).index(c) % len(PALETTE)]
+              if c in selected else PALETTE[0] for c in sorted_dd.index]
 
-with dd_c1:
-    sorted_dd = max_dd.sort_values()
-    bar_colors = [PALETTE[list(selected).index(c) % len(PALETTE)]
-                  if c in selected else PALETTE[0] for c in sorted_dd.index]
-
-    fig3a = go.Figure(go.Bar(
-        x=sorted_dd.values,
-        y=sorted_dd.index,
-        orientation='h',
-        marker=dict(color=bar_colors, opacity=0.85, line=dict(width=0)),
-        hovertemplate="<b>%{y}</b><br>Pire chute : <b>%{x:.1f}%</b><extra></extra>",
-        text=[f"{v:.1f}%" for v in sorted_dd.values],
-        textposition="outside",
-        textfont=dict(size=11, color="#334155"),
-    ))
-    dd_x_min = min(sorted_dd.min() * 1.25, -5)
-    fig3a.update_layout(
-        **base_layout(
-            height=max(280, len(selected) * 42 + 70),
-            showlegend=False,
-            xaxis=dict(
-                title="Chute maximale (%)",
-                title_font=dict(size=13, color="#475569"),
-                gridcolor="#E2E8F0", linecolor="#CBD5E1",
-                tickfont=dict(size=12, color="#475569"),
-                ticksuffix="%", zeroline=True,
-                zerolinecolor="#94A3B8", zerolinewidth=1,
-                range=[dd_x_min, 2],
-            ),
-            yaxis=dict(
-                gridcolor="rgba(0,0,0,0)", linecolor="#CBD5E1",
-                tickfont=dict(size=11, color="#334155"),
-            ),
-            margin=dict(l=5, r=55, t=25, b=45),
-        )
+fig3a = go.Figure(go.Bar(
+    x=sorted_dd.values,
+    y=sorted_dd.index,
+    orientation='h',
+    marker=dict(color=bar_colors, opacity=0.85, line=dict(width=0)),
+    hovertemplate="<b>%{y}</b><br>Pire chute : <b>%{x:.1f}%</b><extra></extra>",
+    text=[f"{v:.1f}%" for v in sorted_dd.values],
+    textposition="outside",
+    textfont=dict(size=10 if MOBILE else 11, color="#334155"),
+))
+dd_x_min = min(sorted_dd.min() * 1.25, -5)
+fig3a.update_layout(
+    **base_layout(
+        height=dd_h(len(selected)),
+        showlegend=False,
+        xaxis=dict(
+            title="Chute maximale (%)",
+            title_font=dict(size=13 if not MOBILE else 11, color="#475569"),
+            gridcolor="#E2E8F0", linecolor="#CBD5E1",
+            tickfont=dict(size=12 if not MOBILE else 10, color="#475569"),
+            ticksuffix="%", zeroline=True,
+            zerolinecolor="#94A3B8", zerolinewidth=1,
+            range=[dd_x_min, 2],
+        ),
+        yaxis=dict(
+            gridcolor="rgba(0,0,0,0)", linecolor="#CBD5E1",
+            tickfont=dict(size=10 if MOBILE else 11, color="#334155"),
+        ),
+        margin=dict(l=5, r=55, t=25, b=45),
     )
+)
+
+cols3    = selected[:4]
+fig3b    = go.Figure()
+for i, col in enumerate(cols3):
+    clr = PALETTE[selected.index(col) % len(PALETTE)]
+    fig3b.add_trace(go.Scatter(
+        x=drawdown.index,
+        y=(drawdown[col] * 100).round(2),
+        name=col, fill="tozeroy",
+        line=dict(width=1.8, color=clr),
+        fillcolor=hex_to_rgba(clr, 0.12),
+        hovertemplate=f"<b style='color:{clr}'>{col}</b><br>%{{x|%d %b %Y}}<br><b>%{{y:.1f}}%</b><extra></extra>",
+    ))
+fig3b.add_hline(y=0, line_color="#94A3B8", line_width=1)
+dd_y_min = (drawdown[cols3].min().min() * 100) * 1.1 if not drawdown[cols3].empty else -100
+fig3b.update_layout(
+    **base_layout(
+        height=dd_h(len(selected)),
+        yaxis=dict(
+            title="Perte depuis le sommet (%)" if not MOBILE else "Drawdown (%)",
+            title_font=dict(size=13 if not MOBILE else 11, color="#475569"),
+            gridcolor="#E2E8F0", linecolor="#CBD5E1",
+            tickfont=dict(size=12 if not MOBILE else 10, color="#475569"),
+            ticksuffix="%", zeroline=False,
+            range=[dd_y_min, 5],
+        ),
+        xaxis=dict(
+            gridcolor="#E2E8F0", linecolor="#CBD5E1",
+            tickfont=dict(size=12 if not MOBILE else 10, color="#475569"),
+            nticks=5 if MOBILE else 8,
+        ),
+        legend=LEGEND_H_MOBILE if MOBILE else LEGEND_H,
+    )
+)
+
+if MOBILE:
+    # Empilement vertical sur mobile
     st.markdown('<div class="chart-card">', unsafe_allow_html=True)
     st.plotly_chart(fig3a, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
-
-with dd_c2:
-    cols3 = selected[:4]
-    fig3b = go.Figure()
-    for i, col in enumerate(cols3):
-        clr = PALETTE[selected.index(col) % len(PALETTE)]
-        fig3b.add_trace(go.Scatter(
-            x=drawdown.index,
-            y=(drawdown[col] * 100).round(2),
-            name=col, fill="tozeroy",
-            line=dict(width=1.8, color=clr),
-            fillcolor=hex_to_rgba(clr, 0.12),
-            hovertemplate=f"<b style='color:{clr}'>{col}</b><br>%{{x|%d %b %Y}}<br><b>%{{y:.1f}}%</b><extra></extra>",
-        ))
-    fig3b.add_hline(y=0, line_color="#94A3B8", line_width=1)
-
-    dd_y_min = (drawdown[cols3].min().min() * 100) * 1.1 if not drawdown[cols3].empty else -100
-    fig3b.update_layout(
-        **base_layout(
-            height=max(280, len(selected) * 42 + 70),
-            yaxis=dict(
-                title="Perte depuis le sommet (%)",
-                title_font=dict(size=13, color="#475569"),
-                gridcolor="#E2E8F0", linecolor="#CBD5E1",
-                tickfont=dict(size=12, color="#475569"),
-                ticksuffix="%", zeroline=False,
-                range=[dd_y_min, 5],
-            ),
-            xaxis=dict(
-                gridcolor="#E2E8F0", linecolor="#CBD5E1",
-                tickfont=dict(size=12, color="#475569"),
-            ),
-            legend=LEGEND_H,
-        )
-    )
     st.markdown('<div class="chart-card">', unsafe_allow_html=True)
     st.plotly_chart(fig3b, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
+else:
+    dd_c1, dd_c2 = st.columns([2, 3])
+    with dd_c1:
+        st.markdown('<div class="chart-card">', unsafe_allow_html=True)
+        st.plotly_chart(fig3a, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+    with dd_c2:
+        st.markdown('<div class="chart-card">', unsafe_allow_html=True)
+        st.plotly_chart(fig3b, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================================================
 # 04 — SAISONNALITÉ
@@ -717,12 +915,14 @@ monthly_ret = monthly_ret.replace([np.inf, -np.inf], np.nan)
 monthly_ret['__mois__'] = monthly_ret.index.month_name()
 months_en = ['January','February','March','April','May','June',
              'July','August','September','October','November','December']
-months_fr = ['Jan','Fév','Mar','Avr','Mai','Jun',
-             'Jul','Aoû','Sep','Oct','Nov','Déc']
+months_fr_full = ['Jan','Fév','Mar','Avr','Mai','Jun',
+                  'Jul','Aoû','Sep','Oct','Nov','Déc']
+# Abréviations très courtes pour mobile
+months_fr_short = ['J','F','M','A','M','J','J','A','S','O','N','D']
+months_fr = months_fr_short if MOBILE else months_fr_full
+
 seas = monthly_ret.groupby('__mois__')[selected].mean().reindex(months_en) * 100
 seas.index = months_fr
-
-# Borner les valeurs aberrantes pour que la palette reste lisible
 seas = seas.clip(-30, 30)
 
 fig4 = px.imshow(
@@ -737,32 +937,33 @@ fig4 = px.imshow(
     ],
     color_continuous_midpoint=0,
     aspect="auto",
-    zmin=-15, zmax=15,   # échelle cohérente et lisible
+    zmin=-15, zmax=15,
 )
 fig4.update_traces(
-    textfont=dict(size=11, family="DM Mono", color="#1E293B"),
+    textfont=dict(size=9 if MOBILE else 11, family="DM Mono", color="#1E293B"),
     hovertemplate="<b>%{y}</b> — <b>%{x}</b><br>Perf. moy. : <b>%{z:.1f}%</b><extra></extra>",
 )
 fig4.update_layout(
     paper_bgcolor="#FFFFFF",
     plot_bgcolor="#FFFFFF",
     font=dict(family="DM Sans, sans-serif", color="#334155", size=12),
-    height=max(220, len(selected) * 44 + 90),
-    margin=dict(l=10, r=100, t=25, b=15),
+    height=max(200 if MOBILE else 220, len(selected) * (36 if MOBILE else 44) + 80),
+    margin=dict(l=5, r=70 if MOBILE else 100, t=20, b=10),
     coloraxis_colorbar=dict(
-        title=dict(text="Gain moy. (%)", font=dict(size=12, color="#475569")),
-        thickness=14, len=0.75,
-        tickfont=dict(size=11, family="DM Mono", color="#475569"),
+        title=dict(text="%" if MOBILE else "Gain moy. (%)",
+                   font=dict(size=11 if MOBILE else 12, color="#475569")),
+        thickness=10 if MOBILE else 14, len=0.75,
+        tickfont=dict(size=9 if MOBILE else 11, family="DM Mono", color="#475569"),
         ticksuffix="%",
     ),
     xaxis=dict(
         side="bottom",
-        tickfont=dict(size=12, color="#334155"),
+        tickfont=dict(size=10 if MOBILE else 12, color="#334155"),
         linecolor="#CBD5E1", gridcolor="rgba(0,0,0,0)",
         title=None,
     ),
     yaxis=dict(
-        tickfont=dict(size=11, color="#334155"),
+        tickfont=dict(size=9 if MOBILE else 11, color="#334155"),
         linecolor="#CBD5E1", gridcolor="rgba(0,0,0,0)",
         title=None,
     ),
@@ -804,28 +1005,29 @@ if len(selected) >= 2:
         zmin=-1, zmax=1,
     )
     fig5.update_traces(
-        textfont=dict(size=11, family="DM Mono", color="#1E293B"),
+        textfont=dict(size=9 if MOBILE else 11, family="DM Mono", color="#1E293B"),
         hovertemplate="<b>%{y}</b> / <b>%{x}</b><br>Corrélation : <b>%{z:.3f}</b><extra></extra>",
     )
     fig5.update_layout(
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
         font=dict(family="DM Sans, sans-serif", color="#334155", size=12),
-        height=max(300, len(selected) * 56 + 90),
-        margin=dict(l=10, r=100, t=25, b=15),
+        height=max(260 if MOBILE else 300, len(selected) * (44 if MOBILE else 56) + 80),
+        margin=dict(l=5, r=70 if MOBILE else 100, t=20, b=10),
         coloraxis_colorbar=dict(
-            title=dict(text="Corrélation", font=dict(size=12, color="#475569")),
-            thickness=14, len=0.75,
-            tickfont=dict(size=11, family="DM Mono", color="#475569"),
+            title=dict(text="Corr." if MOBILE else "Corrélation",
+                       font=dict(size=11 if MOBILE else 12, color="#475569")),
+            thickness=10 if MOBILE else 14, len=0.75,
+            tickfont=dict(size=9 if MOBILE else 11, family="DM Mono", color="#475569"),
             tickvals=[-1, -0.5, 0, 0.5, 1],
         ),
         xaxis=dict(
-            tickfont=dict(size=11, color="#334155"),
+            tickfont=dict(size=9 if MOBILE else 11, color="#334155"),
             linecolor="#CBD5E1", gridcolor="rgba(0,0,0,0)",
-            title=None, tickangle=-30,
+            title=None, tickangle=-35 if MOBILE else -30,
         ),
         yaxis=dict(
-            tickfont=dict(size=11, color="#334155"),
+            tickfont=dict(size=9 if MOBILE else 11, color="#334155"),
             linecolor="#CBD5E1", gridcolor="rgba(0,0,0,0)",
             title=None,
         ),
@@ -852,7 +1054,6 @@ st.markdown("""
 
 yearly_disp = yearly_perf.copy().replace([np.inf, -np.inf], np.nan)
 yearly_disp.index = yearly_disp.index.year
-# Clip pour éviter des couleurs écrasées par des outliers
 yearly_disp = yearly_disp.clip(-200, 500)
 
 st.dataframe(
@@ -861,7 +1062,7 @@ st.dataframe(
         .format(lambda v: f"{v:+.1f}%" if pd.notna(v) else "—")
         .set_properties(**{
             'font-family': 'DM Mono, monospace',
-            'font-size':   '12px',
+            'font-size':   '11px' if MOBILE else '12px',
             'text-align':  'center',
         }),
     use_container_width=True,
@@ -875,7 +1076,7 @@ st.markdown("""
 <div style="margin-top:2.5rem;padding:1.2rem 2rem;background:#1A2B45;
             border-radius:10px;border-top:3px solid #D97706;
             display:flex;justify-content:space-between;align-items:center;
-            flex-wrap:wrap;gap:1rem">
+            flex-wrap:wrap;gap:.8rem">
     <div>
         <div style="font-family:'DM Serif Display',serif;color:#FCD34D;font-size:1rem">
             Global Market Pulse
